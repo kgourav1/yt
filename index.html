@@ -1,0 +1,827 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>yt-dlp Command Generator</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #181818;
+            min-height: 100vh;
+            color: #fff;
+        }
+
+        /* Navbar Styles */
+        .navbar {
+            background: #212121;
+            padding: 15px 0;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.5);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 20px;
+        }
+
+        .nav-logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 1.5em;
+            font-weight: 700;
+            color: #FF0000;
+            text-decoration: none;
+        }
+
+        .nav-logo span {
+            color: #fff;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 30px;
+            list-style: none;
+        }
+
+        .nav-links a {
+            color: #fff;
+            text-decoration: none;
+            font-weight: 500;
+            padding: 8px 16px;
+            border-radius: 4px;
+            transition: all 0.3s ease;
+        }
+
+        .nav-links a:hover,
+        .nav-links a.active {
+            background: #FF0000;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+
+        /* Home Section */
+        #home {
+            animation: fadeIn 0.8s ease;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+            animation: fadeInDown 0.8s ease;
+        }
+
+        .header h1 {
+            font-size: 3em;
+            margin-bottom: 10px;
+            color: #FF0000;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+        }
+
+        .header p {
+            font-size: 1.2em;
+            color: #aaa;
+        }
+
+        .input-section {
+            background: #212121;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+            margin-bottom: 30px;
+            animation: fadeInUp 0.8s ease;
+        }
+
+        .input-group {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        input[type="text"] {
+            flex: 1;
+            padding: 15px 20px;
+            border: 2px solid #3a3a3a;
+            border-radius: 8px;
+            font-size: 16px;
+            background: #282828;
+            color: #fff;
+            transition: all 0.3s ease;
+        }
+
+        input[type="text"]:focus {
+            outline: none;
+            border-color: #FF0000;
+            box-shadow: 0 0 0 3px rgba(255, 0, 0, 0.1);
+        }
+
+        input[type="text"]::placeholder {
+            color: #666;
+        }
+
+        .btn {
+            padding: 15px 30px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .btn-primary {
+            background: #FF0000;
+            color: white;
+            box-shadow: 0 4px 15px rgba(255, 0, 0, 0.3);
+        }
+
+        .btn-primary:hover {
+            background: #cc0000;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(255, 0, 0, 0.4);
+        }
+
+        .btn-primary:active {
+            transform: translateY(0);
+        }
+
+        .commands-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 20px;
+            animation: fadeIn 1s ease;
+        }
+
+        .command-card {
+            background: #212121;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+            transition: all 0.3s ease;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+            border: 1px solid #3a3a3a;
+        }
+
+        .command-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: #FF0000;
+            transform: scaleX(0);
+            transition: transform 0.3s ease;
+        }
+
+        .command-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(255, 0, 0, 0.2);
+            border-color: #FF0000;
+        }
+
+        .command-card:hover::before {
+            transform: scaleX(1);
+        }
+
+        .command-icon {
+            font-size: 2em;
+            margin-bottom: 10px;
+        }
+
+        .command-title {
+            font-size: 1.1em;
+            font-weight: 600;
+            color: #fff;
+            margin-bottom: 10px;
+        }
+
+        .command-description {
+            font-size: 0.9em;
+            color: #aaa;
+            margin-bottom: 15px;
+            line-height: 1.5;
+        }
+
+        .command-text {
+            background: #282828;
+            padding: 12px;
+            border-radius: 6px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.85em;
+            color: #fff;
+            word-break: break-all;
+            margin-bottom: 10px;
+            border-left: 3px solid #FF0000;
+        }
+
+        .copy-btn {
+            width: 100%;
+            padding: 10px;
+            background: #FF0000;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .copy-btn:hover {
+            background: #cc0000;
+            transform: scale(1.02);
+        }
+
+        .copy-btn.copied {
+            background: #00c853;
+            animation: pulse 0.5s ease;
+        }
+
+        .alert {
+            padding: 15px 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            text-align: center;
+            font-weight: 500;
+            animation: slideDown 0.3s ease;
+        }
+
+        .alert-warning {
+            background: #ffb74d;
+            color: #000;
+        }
+
+        .alert-info {
+            background: #4caf50;
+            color: #fff;
+        }
+
+        /* Help Section */
+        #help {
+            display: none;
+            animation: fadeIn 0.8s ease;
+        }
+
+        .help-content {
+            background: #212121;
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+        }
+
+        .help-content h2 {
+            color: #FF0000;
+            font-size: 2em;
+            margin-bottom: 20px;
+            border-bottom: 2px solid #FF0000;
+            padding-bottom: 10px;
+        }
+
+        .help-content h3 {
+            color: #fff;
+            font-size: 1.5em;
+            margin-top: 30px;
+            margin-bottom: 15px;
+        }
+
+        .help-content p {
+            color: #aaa;
+            line-height: 1.8;
+            margin-bottom: 15px;
+        }
+
+        .help-content ol, .help-content ul {
+            color: #aaa;
+            line-height: 2;
+            margin-left: 20px;
+            margin-bottom: 20px;
+        }
+
+        .help-content li {
+            margin-bottom: 10px;
+        }
+
+        .help-content code {
+            background: #282828;
+            padding: 3px 8px;
+            border-radius: 4px;
+            color: #FF0000;
+            font-family: 'Courier New', monospace;
+        }
+
+        .code-block {
+            background: #282828;
+            padding: 20px;
+            border-radius: 8px;
+            border-left: 4px solid #FF0000;
+            margin: 20px 0;
+            overflow-x: auto;
+        }
+
+        .code-block code {
+            background: transparent;
+            color: #fff;
+            display: block;
+            white-space: pre;
+        }
+
+        .note {
+            background: #2a2a2a;
+            padding: 15px;
+            border-left: 4px solid #FF0000;
+            border-radius: 4px;
+            margin: 20px 0;
+        }
+
+        .note strong {
+            color: #FF0000;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+
+        @keyframes pulse {
+            0%, 100% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(1.05);
+            }
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                max-height: 0;
+            }
+            to {
+                opacity: 1;
+                max-height: 100px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 2em;
+            }
+
+            .input-group {
+                flex-direction: column;
+            }
+
+            .commands-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .nav-links {
+                gap: 15px;
+            }
+
+            .help-content {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="#" class="nav-logo">
+                🎬 <span>yt-dlp Generator</span>
+            </a>
+            <ul class="nav-links">
+                <li><a href="#" class="active" onclick="showSection('home')">Home</a></li>
+                <li><a href="#" onclick="showSection('help')">Help</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <div class="container">
+        <!-- Home Section -->
+        <div id="home">
+            <div class="header">
+                <h1>🎬 yt-dlp Command Generator</h1>
+                <p>Paste your YouTube URL and get ready-to-use commands instantly!</p>
+            </div>
+
+            <div class="input-section">
+                <div class="input-group">
+                    <input type="text" id="urlInput" placeholder="Paste your YouTube video or playlist URL here..." />
+                    <button class="btn btn-primary" onclick="generateCommands()">Generate Commands</button>
+                </div>
+                <div id="alertBox" class="hidden"></div>
+            </div>
+
+            <div id="commandsContainer" class="commands-grid hidden"></div>
+        </div>
+
+        <!-- Help Section -->
+        <div id="help">
+            <div class="help-content">
+                <h2>📚 How to Use yt-dlp</h2>
+                
+                <h3>🔧 Installation Guide</h3>
+                
+                <p><strong>Windows Installation:</strong></p>
+                <ol>
+                    <li><strong>Download yt-dlp:</strong>
+                        <ul>
+                            <li>Visit <code>https://github.com/yt-dlp/yt-dlp/releases</code></li>
+                            <li>Download <code>yt-dlp.exe</code> for Windows</li>
+                        </ul>
+                    </li>
+                    <li><strong>Place the file:</strong>
+                        <ul>
+                            <li>Create a folder: <code>C:\yt-dlp</code></li>
+                            <li>Move <code>yt-dlp.exe</code> to this folder</li>
+                        </ul>
+                    </li>
+                    <li><strong>Add to PATH (Optional but Recommended):</strong>
+                        <ul>
+                            <li>Right-click "This PC" → Properties → Advanced System Settings</li>
+                            <li>Click "Environment Variables"</li>
+                            <li>Under "System variables", find "Path" and click "Edit"</li>
+                            <li>Click "New" and add: <code>C:\yt-dlp</code></li>
+                            <li>Click "OK" on all windows</li>
+                        </ul>
+                    </li>
+                    <li><strong>Install FFmpeg (Required for merging video/audio):</strong>
+                        <ul>
+                            <li>Download FFmpeg from <code>https://ffmpeg.org/download.html</code></li>
+                            <li>Extract and add FFmpeg's bin folder to PATH (same process as step 3)</li>
+                        </ul>
+                    </li>
+                </ol>
+
+                <div class="note">
+                    <strong>Note:</strong> After adding to PATH, restart Command Prompt for changes to take effect.
+                </div>
+
+                <h3>🚀 How to Run Commands</h3>
+                
+                <p><strong>Step-by-Step Guide:</strong></p>
+                <ol>
+                    <li><strong>Open Command Prompt:</strong>
+                        <ul>
+                            <li>Press <code>Windows + R</code></li>
+                            <li>Type <code>cmd</code> and press Enter</li>
+                        </ul>
+                    </li>
+                    <li><strong>Navigate to download location (Optional):</strong>
+                        <div class="code-block"><code>cd C:\Users\YourName\Downloads</code></div>
+                    </li>
+                    <li><strong>Paste the command:</strong>
+                        <ul>
+                            <li>Use this website to generate your command</li>
+                            <li>Click "Copy Command" on any card</li>
+                            <li>Right-click in Command Prompt to paste</li>
+                            <li>Press Enter to execute</li>
+                        </ul>
+                    </li>
+                </ol>
+
+                <h3>💡 Usage Examples</h3>
+                
+                <p><strong>Example 1: Download Best Quality Video</strong></p>
+                <div class="code-block"><code>yt-dlp "https://www.youtube.com/watch?v=dQw4w9WgXcQ"</code></div>
+
+                <p><strong>Example 2: Download MP3 Audio</strong></p>
+                <div class="code-block"><code>yt-dlp -x --audio-format mp3 "https://www.youtube.com/watch?v=dQw4w9WgXcQ"</code></div>
+
+                <p><strong>Example 3: Download with Custom Output Location</strong></p>
+                <div class="code-block"><code>yt-dlp -o "C:\Music\%(title)s.%(ext)s" "https://www.youtube.com/watch?v=dQw4w9WgXcQ"</code></div>
+
+                <h3>⚡ Quick Tips</h3>
+                <ul>
+                    <li><strong>Update yt-dlp regularly:</strong> Run <code>yt-dlp -U</code> to get the latest version</li>
+                    <li><strong>Check available formats:</strong> Use <code>yt-dlp -F "URL"</code> to see all formats</li>
+                    <li><strong>Resume downloads:</strong> yt-dlp automatically resumes interrupted downloads</li>
+                    <li><strong>Download playlists:</strong> Just paste the playlist URL, it works automatically</li>
+                    <li><strong>Use quotes:</strong> Always wrap URLs in quotes to avoid errors</li>
+                </ul>
+
+                <h3>🛠️ Troubleshooting</h3>
+                <ul>
+                    <li><strong>"yt-dlp is not recognized":</strong> Either add yt-dlp to PATH or run commands from the folder containing yt-dlp.exe</li>
+                    <li><strong>Audio and video not merging:</strong> Install FFmpeg and add it to PATH</li>
+                    <li><strong>Download fails:</strong> Update yt-dlp using <code>yt-dlp -U</code></li>
+                    <li><strong>Slow downloads:</strong> Your ISP might be throttling, try using <code>--limit-rate</code> parameter</li>
+                </ul>
+
+                <div class="note">
+                    <strong>Pro Tip:</strong> You can combine multiple options! For example:<br>
+                    <code>yt-dlp -x --audio-format mp3 --embed-thumbnail --add-metadata -o "%(title)s.%(ext)s" "URL"</code><br>
+                    This downloads audio as MP3, embeds thumbnail, adds metadata, and uses video title as filename.
+                </div>
+
+                <h3>📖 More Resources</h3>
+                <ul>
+                    <li>Official Documentation: <code>https://github.com/yt-dlp/yt-dlp</code></li>
+                    <li>Report Issues: <code>https://github.com/yt-dlp/yt-dlp/issues</code></li>
+                    <li>FFmpeg Download: <code>https://ffmpeg.org/download.html</code></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const commands = [
+            {
+                icon: "🟢",
+                title: "Best Quality Video",
+                description: "Downloads the best available video with audio merged",
+                command: 'yt-dlp "URL"'
+            },
+            {
+                icon: "🎥",
+                title: "MP4 Format",
+                description: "Forces MP4 video and M4A audio, merges into one MP4",
+                command: 'yt-dlp -f "bestvideo[ext=mp4]+bestaudio[ext=m4a]/mp4" "URL"'
+            },
+            {
+                icon: "🎧",
+                title: "Audio Only (MP3)",
+                description: "Extracts and converts audio to MP3 format",
+                command: 'yt-dlp -x --audio-format mp3 "URL"'
+            },
+            {
+                icon: "🎵",
+                title: "Premium MP3",
+                description: "Best MP3 with thumbnail, metadata, and custom filename",
+                command: 'yt-dlp -x --audio-format mp3 --audio-quality 0 --embed-thumbnail --add-metadata -o "%(title)s.%(ext)s" "URL"'
+            },
+            {
+                icon: "🖼️",
+                title: "Thumbnail Only",
+                description: "Downloads just the thumbnail image",
+                command: 'yt-dlp --skip-download --write-thumbnail "URL"'
+            },
+            {
+                icon: "🖼️",
+                title: "Thumbnail as JPG",
+                description: "Downloads and converts thumbnail to JPG format",
+                command: 'yt-dlp --skip-download --write-thumbnail --convert-thumbnails jpg "URL"'
+            },
+            {
+                icon: "📜",
+                title: "With Subtitles",
+                description: "Downloads video with English subtitles",
+                command: 'yt-dlp --write-subs --sub-lang en "URL"'
+            },
+            {
+                icon: "📜",
+                title: "Embed Subtitles",
+                description: "Merges subtitles directly into video file",
+                command: 'yt-dlp -f best --write-subs --embed-subs "URL"'
+            },
+            {
+                icon: "📦",
+                title: "Download Playlist",
+                description: "Downloads entire playlist automatically",
+                command: 'yt-dlp "URL"'
+            },
+            {
+                icon: "📢",
+                title: "Specific Playlist Items",
+                description: "Downloads items 1-5 and 8 from playlist",
+                command: 'yt-dlp --playlist-items 1-5,8 "URL"'
+            },
+            {
+                icon: "📺",
+                title: "720p Quality",
+                description: "Downloads video with maximum 720p resolution",
+                command: 'yt-dlp -f "bestvideo[height<=720]+bestaudio/best[height<=720]" "URL"'
+            },
+            {
+                icon: "⚡",
+                title: "Max Speed Download",
+                description: "Downloads with infinite retries and no throttling",
+                command: 'yt-dlp -R infinite --fragment-retries infinite "URL"'
+            },
+            {
+                icon: "🧩",
+                title: "MP3 with Thumbnail",
+                description: "Audio with embedded thumbnail as album art",
+                command: 'yt-dlp -x --audio-format mp3 --embed-thumbnail "URL"'
+            },
+            {
+                icon: "🧾",
+                title: "With Metadata",
+                description: "Adds ID3 tags and metadata to the file",
+                command: 'yt-dlp -x --audio-format mp3 --add-metadata "URL"'
+            },
+            {
+                icon: "🪣",
+                title: "Save Description",
+                description: "Downloads description and metadata JSON",
+                command: 'yt-dlp --write-description --write-info-json "URL"'
+            },
+            {
+                icon: "⏳",
+                title: "Time Range (1-3 min)",
+                description: "Downloads only content between 1-3 minutes",
+                command: 'yt-dlp "URL" --download-sections "*00:01:00-00:03:00"'
+            },
+            {
+                icon: "🪄",
+                title: "Skip Existing Files",
+                description: "Doesn't re-download files that already exist",
+                command: 'yt-dlp --no-overwrites "URL"'
+            },
+            {
+                icon: "🪶",
+                title: "Get Info Only",
+                description: "Shows title and URL without downloading",
+                command: 'yt-dlp --skip-download --print title,url "URL"'
+            },
+            {
+                icon: "📊",
+                title: "Limit Speed (500KB/s)",
+                description: "Limits download speed to 500 KB/s",
+                command: 'yt-dlp --limit-rate 500K "URL"'
+            },
+            {
+                icon: "🕒",
+                title: "Recent Uploads Only",
+                description: "Downloads only videos uploaded after Jan 1, 2025",
+                command: 'yt-dlp --dateafter 20250101 "URL"'
+            }
+        ];
+
+        function showSection(section) {
+            const home = document.getElementById('home');
+            const help = document.getElementById('help');
+            const navLinks = document.querySelectorAll('.nav-links a');
+
+            if (section === 'home') {
+                home.style.display = 'block';
+                help.style.display = 'none';
+                navLinks[0].classList.add('active');
+                navLinks[1].classList.remove('active');
+            } else {
+                home.style.display = 'none';
+                help.style.display = 'block';
+                navLinks[0].classList.remove('active');
+                navLinks[1].classList.add('active');
+            }
+        }
+
+        function generateCommands() {
+            const urlInput = document.getElementById('urlInput');
+            const url = urlInput.value.trim();
+            const alertBox = document.getElementById('alertBox');
+            const commandsContainer = document.getElementById('commandsContainer');
+
+            alertBox.className = 'hidden';
+            alertBox.innerHTML = '';
+
+            if (!url) {
+                alertBox.className = 'alert alert-warning';
+                alertBox.innerHTML = '⚠️ Please paste a YouTube URL first!';
+                commandsContainer.className = 'commands-grid hidden';
+                return;
+            }
+
+            if (!url.includes('youtube.com') && !url.includes('youtu.be')) {
+                alertBox.className = 'alert alert-warning';
+                alertBox.innerHTML = '⚠️ Please enter a valid YouTube URL!';
+                commandsContainer.className = 'commands-grid hidden';
+                return;
+            }
+
+            alertBox.className = 'alert alert-info';
+            alertBox.innerHTML = '✅ Commands generated! Click any command to copy it to clipboard.';
+
+            commandsContainer.innerHTML = '';
+            commandsContainer.className = 'commands-grid';
+
+            commands.forEach((cmd, index) => {
+                const card = document.createElement('div');
+                card.className = 'command-card';
+                card.style.animationDelay = `${index * 0.05}s`;
+
+                const fullCommand = cmd.command.replace('URL', url);
+
+                card.innerHTML = `
+                    <div class="command-icon">${cmd.icon}</div>
+                    <div class="command-title">${cmd.title}</div>
+                    <div class="command-description">${cmd.description}</div>
+                    <div class="command-text">${escapeHtml(fullCommand)}</div>
+                    <button class="copy-btn" data-command="${escapeHtml(fullCommand)}">
+                        📋 Copy Command
+                    </button>
+                `;
+
+                commandsContainer.appendChild(card);
+            });
+
+            // Add event listeners to copy buttons
+            document.querySelectorAll('.copy-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    copyCommand(this);
+                });
+            });
+        }
+
+        function escapeHtml(text) {
+            const map = {
+                '&': '&amp;',
+                '<': '&lt;',
+                '>': '&gt;',
+                '"': '&quot;',
+                "'": '&#039;'
+            };
+            return text.replace(/[&<>"']/g, m => map[m]);
+        }
+
+        function copyCommand(btn) {
+            const command = btn.getAttribute('data-command');
+            
+            // Create a temporary textarea element
+            const textarea = document.createElement('textarea');
+            textarea.value = command;
+            textarea.style.position = 'fixed';
+            textarea.style.opacity = '0';
+            document.body.appendChild(textarea);
+            textarea.select();
+            
+            try {
+                document.execCommand('copy');
+                const originalText = btn.innerHTML;
+                btn.innerHTML = '✅ Copied!';
+                btn.classList.add('copied');
+
+                setTimeout(() => {
+                    btn.innerHTML = originalText;
+                    btn.classList.remove('copied');
+                }, 2000);
+            } catch (err) {
+                console.error('Failed to copy:', err);
+                alert('Failed to copy command. Please try selecting and copying manually.');
+            }
+            
+            document.body.removeChild(textarea);
+        }
+
+        document.getElementById('urlInput').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                generateCommands();
+            }
+        });
+    </script>
+</body>
+</html>
