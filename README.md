@@ -221,7 +221,7 @@ This project is open source and available under the [MIT License](LICENSE).
 
 **Kumar Gourav**
 
-- GitHub: [@yourusername](https://github.com/kgourav1)
+- GitHub: [@kgourav1](https://github.com/kgourav1)
 
 ## 🙏 Acknowledgments
 
